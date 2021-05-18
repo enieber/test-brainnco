@@ -1,24 +1,33 @@
-FROM node:14
+FROM node:16-alpine as base
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-ARG ZARYA_PORT
-ENV ZARYA_PORT "$ZARYA_PORT"
+COPY ./backend/package.json .
+COPY ./backend/yarn.lock .
 
-ARG HASURA_GRAPHQL_ADMIN_SECRET
-ENV HASURA_GRAPHQL_ADMIN_SECRET "$HASURA_GRAPHQL_ADMIN_SECRET"
+ARG SERVER_PORT
+ENV SERVER_PORT "$SERVER_PORT"
+EXPOSE "$SERVER_PORT"
 
-ARG ENCRYPTION_KEY
-ENV ENCRYPTION_KEY "$ENCRYPTION_KEY"
 
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
 
-RUN npm install --production --silent && mv node_modules ../
+# --------- Production ---------------
+FROM base as production
+ENV NODE_ENV=production
+RUN yarn install --production
+COPY ./backend .
 
-COPY . .
+CMD ["npm", "start"]
 
-EXPOSE "$PORT"
 
-RUN npm install -g nodemon
 
-CMD npm start
+# --------- Develop -------------------
+FROM base as dev
+ENV NODE_ENV=development
+
+RUN yarn global add nodemon
+RUN yarn
+
+COPY ./backend .
+
+CMD ["npm", "run", "dev"]

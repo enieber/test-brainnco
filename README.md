@@ -1,17 +1,19 @@
-# Zarya
+# App nodejs
 
-This project is the first module to connect with station work. This name is based in [Zarya module](https://en.wikipedia.org/wiki/Zarya)
+App nodejs
 
 ## Requirement
 
+- docker
 - nodejs
 - npm
-- bash
+- make
 
 ## Development
 
-- use npm to install dependencies: `npm install`
-- run server with start command: `npm start`
+- setup project run: `make setup-dev`
+- after setup run: `make dev-up`
+- open [localhost](http://localhost)
 
 ## Licence
 
